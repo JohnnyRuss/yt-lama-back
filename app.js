@@ -15,6 +15,27 @@ const authenticationRoutes = require("./src/routes/authenticationRoutes");
 
 const App = express();
 
+process.env.NODE_MODE === "DEV" && App.use(morgan("dev"));
+
+App.use(express.json());
+App.use(express.urlencoded({ extended: false }));
+App.use(express.static(path.join(__dirname, "public/images")));
+
+App.use(cookieParser());
+
+App.use(function (req, res, next) {
+  res.header("Access-Control-Allow-credentials", true);
+  res.header("Access-Control-Allow-Origin", req.headers.origin);
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Origin, Authorization"
+  );
+
+  if (req.method === "OPTIONS") res.sendStatus(200);
+  else next();
+});
+
 App.use(
   cors({
     credentials: true,
@@ -30,27 +51,6 @@ App.use(
     },
   })
 );
-
-App.use(function (req, res, next) {
-  res.header("Access-Control-Allow-credentials", true);
-  res.header("Access-Control-Allow-Origin", req.headers.origin);
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Origin, Authorization"
-  );
-
-  if (req.method === "OPTIONS") res.sendStatus(200);
-  else next();
-});
-
-App.use(express.json());
-App.use(express.urlencoded({ extended: false }));
-App.use(express.static(path.join(__dirname, "public/images")));
-
-App.use(cookieParser());
-
-process.env.NODE_MODE !== "DEV" && App.use(morgan("dev"));
 
 App.use("/api/v1/authentication", authenticationRoutes);
 App.use("/api/v1/users", userRoutes);
