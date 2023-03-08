@@ -24,9 +24,8 @@ App.use(express.static(path.join(__dirname, "public/images")));
 App.use(cookieParser());
 
 App.use(function (req, res, next) {
-  console.log({ origin: req.headers.origin });
   res.header("Access-Control-Allow-Credentials", true);
-  res.header("Access-Control-Allow-Origin", req.headers.origin);
+  res.header("Access-Control-Allow-Origin", getOrigins()?.[0]);
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE");
   res.header(
     "Access-Control-Allow-Headers",
