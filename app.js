@@ -24,7 +24,8 @@ App.use(express.static(path.join(__dirname, "public/images")));
 App.use(cookieParser());
 
 App.use(function (req, res, next) {
-  res.header("Access-Control-Allow-credentials", true);
+  console.log({ origin: req.headers.origin });
+  res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Origin", req.headers.origin);
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE");
   res.header(
@@ -41,7 +42,7 @@ App.use(
     credentials: true,
     origin: function (origin, callback) {
       if (!origin) return callback(null, false);
-
+      console.log({ origin, myOrigins: getOrigins() });
       if (!getOrigins().includes(origin)) {
         const msg = `This site ${origin} does not have an access. Only specific domains are allowed to access it.`;
         return callback(new Error(msg), false);
